@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zallpy.reportsBuilder.model.Customer;
+import com.zallpy.reportsBuilder.model.Parser;
 import com.zallpy.reportsBuilder.model.Report;
+import com.zallpy.reportsBuilder.model.Sales;
+import com.zallpy.reportsBuilder.model.Seller;
 
 @RestController
 public class MainController {
@@ -44,6 +48,7 @@ public class MainController {
 	public String getFilesContent() {
 
 		String _return = "";
+		String teste = "";
 		
 		final File folder = new File(path);
 		List<String> files = listFilesForFolder(folder);
@@ -57,7 +62,33 @@ public class MainController {
 				e.printStackTrace();
 			}
 		}
-		return _return;
+		
+		Parser parser = new Parser(_return);
+		List<Customer> listCustomer = parser.getCustomer();
+		for (Customer c : listCustomer) {
+			teste += c.getId() + " | ";
+			teste += c.getCpf() + " | ";
+			teste += c.getName() + " | ";
+			teste += c.getArea() + System.lineSeparator();
+		}
+		
+		List<Seller> listSeller = parser.getSellers();
+		for (Seller c : listSeller) {
+			teste += c.getId() + " | ";
+			teste += c.getCpf() + " | ";
+			teste += c.getName() + " | ";
+			teste += c.getSalary() + System.lineSeparator();
+		}
+		
+		List<Sales> listSales = parser.getItens();
+		for (Sales c : listSales) {
+			teste += c.getId() + " | ";
+			teste += c.getSalesId() + " | ";
+			teste += c.getSallesItens().toString() + " | ";
+			teste += c.getSalesman().getName() + System.lineSeparator();
+		}
+		return teste;
+		//return _return;
 	}
 
 	private List<String> listFilesForFolder(final File folder) {
