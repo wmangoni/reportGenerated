@@ -1,12 +1,16 @@
 package com.zallpy.reportsBuilder.model;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Report {
 	
 	//Quantidade de clientes no arquivo de entrada
-	private String customer;
+	private Integer customer;
 	
 	//Quantidade de vendedor no arquivo de entrada
-	private String selesman;
+	private Integer selesman;
 
 	//ID da venda mais cara
 	private String mostExpensiveSale;
@@ -14,17 +18,26 @@ public class Report {
 	//O pior vendedor
 	private String worstSaller;
 	
+
+	public void buildReport(String fileName) throws IOException {
+	    String str = "Hello";
+	    BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+	    writer.write(str);
+	     
+	    writer.close();
+	}
 	
-	public String getCustomer() {
+	
+	public Integer getCustomer() {
 		return customer;
 	}
-	public void setCustomer(String customer) {
+	public void setCustomer(Integer customer) {
 		this.customer = customer;
 	}
-	public String getSelesman() {
+	public Integer getSelesman() {
 		return selesman;
 	}
-	public void setSelesman(String selesman) {
+	public void setSelesman(Integer selesman) {
 		this.selesman = selesman;
 	}
 	public String getMostExpensiveSale() {

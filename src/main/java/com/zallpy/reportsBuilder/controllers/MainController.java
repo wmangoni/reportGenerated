@@ -13,14 +13,35 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zallpy.reportsBuilder.model.Report;
+
 @RestController
 public class MainController {
 
 	private String path = "./src/main/resources/data/in";
+	private String outputPath = "./src/main/resources/data/out";
+	
+	@RequestMapping(value = "/generateReports", method = RequestMethod.GET)
+	@ResponseBody
+	public String generateReports() {
+		Report report = new Report();
+		report.setCustomer(2);
+		report.setSelesman(1);
+		report.setMostExpensiveSale("001");
+		report.setWorstSeller("asdfa");
+		try {
+			report.buildReport(outputPath + "/teste.dat");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return "ok";
+	}
 
 	@RequestMapping(value = "/files", method = RequestMethod.GET)
 	@ResponseBody
-	public String getFoosBySimplePath() {
+	public String getFilesContent() {
 
 		String _return = "";
 		
