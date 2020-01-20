@@ -17,6 +17,7 @@ import com.zallpy.reportsBuilder.model.Customer;
 import com.zallpy.reportsBuilder.model.Parser;
 import com.zallpy.reportsBuilder.model.Report;
 import com.zallpy.reportsBuilder.model.Sales;
+import com.zallpy.reportsBuilder.model.SallesItem;
 import com.zallpy.reportsBuilder.model.Seller;
 
 @RestController
@@ -28,13 +29,21 @@ public class MainController {
 	@RequestMapping(value = "/generateReports", method = RequestMethod.GET)
 	@ResponseBody
 	public String generateReports() {
+		
+		String content = getFilesContent();
+		Parser parser = new Parser(content);
+		
+		List<Customer> listCustomer = parser.getCustomer();
+		List<Seller> listSeller = parser.getSellers();
+		List<Sales> listSales = parser.getItens();
+		
 		Report report = new Report();
 		report.setCustomer(2);
 		report.setSelesman(1);
 		report.setMostExpensiveSale("001");
 		report.setWorstSeller("asdfa");
 		try {
-			report.buildReport(outputPath + "/teste.dat");
+			report.buildReport(outputPath + "/teste.dat", listCustomer, listSeller, listSales);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -63,31 +72,33 @@ public class MainController {
 			}
 		}
 		
-		Parser parser = new Parser(_return);
-		List<Customer> listCustomer = parser.getCustomer();
-		for (Customer c : listCustomer) {
-			teste += c.getId() + " | ";
-			teste += c.getCpf() + " | ";
-			teste += c.getName() + " | ";
-			teste += c.getArea() + System.lineSeparator();
-		}
+		return _return;
 		
-		List<Seller> listSeller = parser.getSellers();
-		for (Seller c : listSeller) {
-			teste += c.getId() + " | ";
-			teste += c.getCpf() + " | ";
-			teste += c.getName() + " | ";
-			teste += c.getSalary() + System.lineSeparator();
-		}
-		
-		List<Sales> listSales = parser.getItens();
-		for (Sales c : listSales) {
-			teste += c.getId() + " | ";
-			teste += c.getSalesId() + " | ";
-			teste += c.getSallesItens().toString() + " | ";
-			teste += c.getSalesman().getName() + System.lineSeparator();
-		}
-		return teste;
+//		Parser parser = new Parser(_return);
+//		List<Customer> listCustomer = parser.getCustomer();
+//		for (Customer c : listCustomer) {
+//			teste += c.getId() + " | ";
+//			teste += c.getCpf() + " | ";
+//			teste += c.getName() + " | ";
+//			teste += c.getArea() + System.lineSeparator();
+//		}
+//		
+//		List<Seller> listSeller = parser.getSellers();
+//		for (Seller c : listSeller) {
+//			teste += c.getId() + " | ";
+//			teste += c.getCpf() + " | ";
+//			teste += c.getName() + " | ";
+//			teste += c.getSalary() + System.lineSeparator();
+//		}
+//		
+//		List<Sales> listSales = parser.getItens();
+//		for (Sales c : listSales) {
+//			teste += c.getId() + " | ";
+//			teste += c.getSalesId() + " | ";
+//			teste += c.getSallesItens().toString() + " | ";
+//			teste += c.getSalesman().getName() + System.lineSeparator();
+//		}
+//		return teste;
 		//return _return;
 	}
 
