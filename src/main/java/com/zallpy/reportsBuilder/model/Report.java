@@ -21,48 +21,57 @@ public class Report {
 	//O pior vendedor
 	private String worstSaller;
 	
+	private String contentFinal;
+	
+	Map<String, Double> totalPriceForSeller = new HashMap<String, Double>();
+	
 
-	public void buildReport(String fileName, List<Customer> customers, List<Seller> sellers, List<Sales> sales) throws IOException {
-	    String str = "";
+	public void buildReport(List<Customer> customers, List<Seller> sellers, List<Sales> sales) {
 	    this.setCustomer(customers.size());
 	    this.setSelesman(sellers.size());
 	    this.checkMoreExpansiveSale(sales);
-	    
-	    BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+	    this.checkForWorstSeller();
+	}
+	
+	public void WriteResultInFile(String fileName) throws IOException {
+		String str = "";
+		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 	    str += "Total Clientes: " + this.getCustomer() + System.lineSeparator();
 	    str += "Total Vendedores: " + this.getSelesman() + System.lineSeparator();
-	    str += "Item mais caro: " + this.getMostExpensiveSale() + System.lineSeparator();
+	    str += "ID da venda mais cara: " + this.getMostExpensiveSale() + System.lineSeparator();
 	    str += "Pior Vendedor: " + this.getWorstSaller() + System.lineSeparator();
 	    writer.write(str);
+	    
+	    System.out.println(str);
+	    
+	    setContentFinal(str);
 	     
 	    writer.close();
 	}
-	//le arquivos
-	//guardo em memoria
-	//separo vendedores, clientes e vendas
-	//faço a contagem e analise de cada requisito do report
-	//salvo essas informaçõe em um arquivo de saida
+
 	private void checkMoreExpansiveSale(List<Sales> sales) {
-		Double price = 0.0;
-		Map<String, Double> totalPriceForSeller = new HashMap<String, Double>();
+		
+		Double maxPrice = 0.0;
 		String id = "Nenhum item encontrado";
+		
 		for (Sales sale : sales) {
-			Double maxPrice = 0.0;	
+			Double salesPrice = 0.0;
 			for (SallesItem item : sale.getSallesItens()) {
-				maxPrice += item.getQuantity() * item.getPrice();
-				if (item.getQuantity() * item.getPrice() > price) {
-					price = item.getPrice();
-					id = item.getId();
-				}
+				salesPrice += item.getQuantity() * item.getPrice();
 			}
 			
-			totalPriceForSeller.put(sale.getSalesman().getName(), maxPrice);
+			if (maxPrice < salesPrice) {
+				maxPrice = salesPrice;
+				id = sale.getSalesId();
+			}
+			
+			totalPriceForSeller.put(sale.getSalesman().getName(), salesPrice);
 		}
-		checkSalesForSeller(totalPriceForSeller);
+		
 		mostExpensiveSale = id;
 	}
 	
-	private void checkSalesForSeller(Map<String, Double> totalPriceForSeller) {
+	private void checkForWorstSeller() {
 		Double lessPrice = Double.MAX_VALUE;
 		String seler = "Nenhum vendedor encontrado";
 		for (Map.Entry<String, Double> entry : totalPriceForSeller.entrySet()) {
@@ -97,6 +106,14 @@ public class Report {
 	}
 	public void setWorstSeller(String worstSaller) {
 		this.worstSaller = worstSaller;
+	}
+
+	public String getContentFinal() {
+		return contentFinal;
+	}
+
+	public void setContentFinal(String contentFinal) {
+		this.contentFinal = contentFinal;
 	}
 
 }

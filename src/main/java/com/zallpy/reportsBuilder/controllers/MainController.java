@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,6 @@ import com.zallpy.reportsBuilder.model.Customer;
 import com.zallpy.reportsBuilder.model.Parser;
 import com.zallpy.reportsBuilder.model.Report;
 import com.zallpy.reportsBuilder.model.Sales;
-import com.zallpy.reportsBuilder.model.SallesItem;
 import com.zallpy.reportsBuilder.model.Seller;
 
 @RestController
@@ -38,25 +38,41 @@ public class MainController {
 		List<Sales> listSales = parser.getItens();
 		
 		Report report = new Report();
-		report.setCustomer(2);
-		report.setSelesman(1);
-		report.setMostExpensiveSale("001");
-		report.setWorstSeller("asdfa");
+	
 		try {
-			report.buildReport(outputPath + "/teste.dat", listCustomer, listSeller, listSales);
+			Timestamp dataDeHoje = new Timestamp(System.currentTimeMillis());
+			String[] data = dataDeHoje.toLocaleString().split(":");
+			report.buildReport( 
+					listCustomer, 
+					listSeller, 
+					listSales
+				);
+			
+			
+			report.WriteResultInFile(
+					outputPath + 
+					"/report_" + 
+					data[0] + 
+					"-" + 
+					data[1] + 
+					"-" + 
+					data[2] + 
+					Math.random() * 999 +
+					".dat"
+				);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return e.getMessage();
 		}
-		return "ok";
+		return report.getContentFinal();
 	}
 
 	@RequestMapping(value = "/files", method = RequestMethod.GET)
 	@ResponseBody
 	public String getFilesContent() {
 
-		String _return = "";
+		String allContent = "";
 		String teste = "";
 		
 		final File folder = new File(path);
@@ -64,42 +80,20 @@ public class MainController {
 		
 		for (String name : files) {
 			try {
-				_return += readFile(name);
+				String[] formatFile = name.split("\\.");
+				//apenas lê arquivos .dat
+				if (formatFile.length > 1 && formatFile[1].equals("dat")) {
+					allContent += readFile(name);
+				}
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
-				_return = e.getMessage();
+				allContent = e.getMessage();
 				e.printStackTrace();
 			}
 		}
 		
-		return _return;
-		
-//		Parser parser = new Parser(_return);
-//		List<Customer> listCustomer = parser.getCustomer();
-//		for (Customer c : listCustomer) {
-//			teste += c.getId() + " | ";
-//			teste += c.getCpf() + " | ";
-//			teste += c.getName() + " | ";
-//			teste += c.getArea() + System.lineSeparator();
-//		}
-//		
-//		List<Seller> listSeller = parser.getSellers();
-//		for (Seller c : listSeller) {
-//			teste += c.getId() + " | ";
-//			teste += c.getCpf() + " | ";
-//			teste += c.getName() + " | ";
-//			teste += c.getSalary() + System.lineSeparator();
-//		}
-//		
-//		List<Sales> listSales = parser.getItens();
-//		for (Sales c : listSales) {
-//			teste += c.getId() + " | ";
-//			teste += c.getSalesId() + " | ";
-//			teste += c.getSallesItens().toString() + " | ";
-//			teste += c.getSalesman().getName() + System.lineSeparator();
-//		}
-//		return teste;
-		//return _return;
+		return allContent;
+	
 	}
 
 	private List<String> listFilesForFolder(final File folder) {
@@ -111,7 +105,7 @@ public class MainController {
 				if (fileEntry.isDirectory()) {
 					files = listFilesForFolder(fileEntry);
 				} else {
-					System.out.println(fileEntry.getName());
+					//System.out.println(fileEntry.getName());
 					files.add(fileEntry.getName());
 				}
 			}
@@ -122,7 +116,7 @@ public class MainController {
 
 	private String readFile(String fileName) throws FileNotFoundException, IOException {
 		
-		String _return = "";
+		String content = "";
 		 
 		BufferedReader br = new BufferedReader(
 			new FileReader(
@@ -133,13 +127,13 @@ public class MainController {
 		String st;
 		
 		while ((st = br.readLine()) != null) {
-			System.out.println(st);
-			_return += st + System.lineSeparator();
+			//System.out.println(st);
+			content += st + System.lineSeparator();
 		}
 		
 		br.close();
 		
-		return _return;
+		return content;
 		
 	}
 

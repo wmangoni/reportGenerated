@@ -30,7 +30,7 @@ public class Parser {
 	
 	private List<String[]> sellers = new ArrayList<String[]>();
 	private List<String[]> customers = new ArrayList<String[]>();
-	private List<String[]> salles = new ArrayList<String[]>();
+	private List<String[]> sales = new ArrayList<String[]>();
 	
 	public Parser(String text) {
 		String[] lines = brokenContent(text);
@@ -43,7 +43,7 @@ public class Parser {
 				customers.add(str);
 			}
 			if (str[0].equals(ID_SELLES)) {
-				salles.add(str);
+				sales.add(str);
 			}
 		}
 	}
@@ -93,11 +93,10 @@ public class Parser {
 	public List<Sales> getItens() {
 		
 		List<Sales> listSales = new ArrayList<Sales>();
-		
-		List<SallesItem> sallesItens = new ArrayList<SallesItem>();
-				
-		for (String list[] : this.salles) {
+	
+		for (String list[] : this.sales) {
 			Seller s = null;
+			List<SallesItem> sallesItens = new ArrayList<SallesItem>();
 			for (Seller seller : getSellers()) {
 				if (seller.getName().equals(list[3])) {
 					s = seller;
