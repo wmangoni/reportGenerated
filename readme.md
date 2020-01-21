@@ -10,4 +10,4 @@ Coloque os arquivos .dat no diretório src/main/resources/data/in
 
 A saída será no diretório src/main/resources/data/out
 
-acesse a url hhtp://localhost:8080/generateReports
+acesse a url http://localhost:8080/generateReports
