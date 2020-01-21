@@ -41,7 +41,7 @@ public class MainController {
 	
 		try {
 			Timestamp dataDeHoje = new Timestamp(System.currentTimeMillis());
-			String[] data = dataDeHoje.toLocaleString().split(":");
+			String[] data = dataDeHoje.toLocaleString().replaceAll("/", "_").split(":");
 			report.buildReport( 
 					listCustomer, 
 					listSeller, 
